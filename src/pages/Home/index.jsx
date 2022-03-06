@@ -30,17 +30,30 @@ const Home = () => {
 
   const getAllPokemon = () => {
     setLoading(true);
-    dispatch(getAllDataPokemon(id, search, limit)).then((res) => {
+    dispatch(getAllDataPokemon(id, "", limit)).then((res) => {
       setDataSource(res.action.payload.data.data);
       setLimit(res.action.payload.data.pagination.totalData);
       setLoading(false);
     });
   };
 
+  const FindPokemon = (e) => {
+    const searchValue = e.target.value;
+    if (e.key === "Enter") {
+      dispatch(getAllDataPokemon(id, search, limit))
+        .then((response) => {
+          const newData = response.value.data.data;
+          setDataSource(newData);
+        })
+        .catch((error) => new Error(error.message));
+    }
+    setSearch(searchValue);
+  };
+
   useEffect(() => {
     document.title = "Pokedex | Home";
     getAllPokemon();
-  }, [id, search, limit]);
+  }, [limit]);
 
   return (
     <>
@@ -65,6 +78,7 @@ const Home = () => {
                 placeholder="Search pokemon ..."
                 prefix={<SearchOutlined />}
                 className="searchBar"
+                onKeyPress={FindPokemon}
               />
             </Col>
           </Row>
